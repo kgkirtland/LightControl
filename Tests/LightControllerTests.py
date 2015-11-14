@@ -27,7 +27,7 @@ class LightControllerTest(TestCase):
         lightsController.LightsOn()
         self.assertEqual(mockedRpi.SetPinLow.call_count, len(self._testLightPinsList))
 
-    def test_LightShowSequence_Verify_SetPinHigh_Called_With_Parameters(self, mockedRpi, mockedTimeWrapper):
+    def test_LightShowSequence_Verify_SetPinHigh_Called(self, mockedRpi, mockedTimeWrapper):
         lightsController = LightController(self._testLightPinsList, mockedRpi, mockedTimeWrapper)
         x = 5
         timeDelayDivider = 7
