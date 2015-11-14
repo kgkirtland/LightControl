@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+#
+# Kenny Kirtland
+# @2015
+#
+# Home Automation --- Raspberry Pi GPIO Light Controller
+#
+#
+
+import time
+import random
+
+class LightController(object):
+    def __init__(self, lightPinsList, gpioInterface):
+        self._lightPinsList = lightPinsList
+        self._gpioInterface = gpioInterface
+        for lightPin in self._lightPinsList:
+            self._gpioInterface.SetOutPin(lightPin)
+
+    def LightsOff(self):
+        """
+        Sends off signal to each light pin
+        """
+        for lightPin in self._lightPinsList:
+            self._gpioInterface.SetPinHigh(lightPin)
+
+    def LightsOn(self):
+        """
+        Sends on signal to each light pin
+        """
+        for lightPin in self._lightPinsList:
+            self._gpioInterface.SetPinLow(lightPin)
+
+    def RunLightShow(self, cycleLimit):
+        """
+        Runs light show
+        """
+        timeDelayDivider = 3
+        x = 1
+
+        if x > cycleLimit : x = 1 #reset counter once it hits the cycle limit
+
+        selectedLight = self.GetRandomLightPin()
+       self.BlinkLight(selectedLight, x / timeDelayDivider)
+            selectedLight = self.GetRandomLightPin()
+            self._gpioInterface.SetPinHigh(selectedLight) if x % 2 == 0 else self._gpioInterface.SetPinLow(selectedLight)
+            time.sleep(.5 * x)
+            x = x + 1
+
+    def BlinkLight(self, selectedLight, timeDelay):
+        self._gpioInterface.SetPinLow(selectedLight)
+        time.sleep(timeDelay)
+        self._gpioInterface.SetPinHigh(selectedLight)
+    
+    def GetRandomLightPin(self):
+        selectedLight = random.choice(self._lightPinsList)
+        return selectedLight
+
+    def Cleanup(self):
+        """
+        Performs cleanup to light pins
+        """
+        self._gpioInterface.Cleanup()
